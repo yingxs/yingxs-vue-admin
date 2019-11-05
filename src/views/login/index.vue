@@ -150,6 +150,7 @@ export default {
         this.capsTooltip = false
       }
     },
+
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
