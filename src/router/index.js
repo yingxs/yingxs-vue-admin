@@ -196,11 +196,24 @@ export const asyncRoutes = [
     ]
   },
 
+  {
+    path: '/score-entering',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/scoreEntering/index'),
+        name: 'ScoreEntering',
+        meta: { title: '测试测试1', icon: 'nested', noCache: true }
+      }
+    ]
+  },
+
   /** when your routing map is too long, you can split it into small modules **/
-  // componentsRouter,
-  // chartsRouter,
-  // nestedRouter,
-  // tableRouter,
+  componentsRouter,
+  chartsRouter,
+  nestedRouter,
+  tableRouter,
 
   {
     path: '/example',
