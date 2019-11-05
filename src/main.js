@@ -37,6 +37,7 @@ Vue.use(Element, {
 })
 
 // register global utility filters
+// 注册全局通用过滤器
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })

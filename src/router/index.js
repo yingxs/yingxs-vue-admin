@@ -86,6 +86,7 @@ export const constantRoutes = [
           icon: 'dashboard',
           affix: true
         }
+ 
       }
     ]
   },
@@ -189,8 +190,13 @@ export const asyncRoutes = [
       {
         path: 'index',
         component: () => import('@/views/icons/index'),
+<<<<<<< HEAD
         name: 'Icons',
         meta: { title: '图标', icon: 'icon', noCache: true }
+=======
+        name: '图标',
+        meta: { title: 'Icons', icon: 'icon', noCache: true }
+>>>>>>> afc0b76a02c394efeb34131595f1dba24b35c746
       }
     ]
   },
