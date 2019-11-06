@@ -1,8 +1,14 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <el-col :span="6" :xs="24">
+     <!-- <el-col :span="6" :xs="24">
         <user-card :user="user" />
+      </el-col> -->
+      <el-col :span="6" :xs="24">
+        <select-and-process-card />
+      </el-col>
+      <el-col :span="7" :xs="24">
+        <student-card :user="user" />
       </el-col>
     </el-row>
   </div>
@@ -11,16 +17,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import UserCard from '../profile/components/UserCard'
-import Activity from '../profile/components/Activity'
-import Timeline from '../profile/components/Timeline'
-import Account from '../profile/components/Account'
+import StudentCard from './components/StudentCard'
+import SelectAndProcessCard from './components/SelectAndProcessCard'
 
 export default {
   name: 'Profile',
-  components: { UserCard, Activity, Timeline, Account },
+  components: { UserCard, StudentCard,SelectAndProcessCard },
   data() {
     return {
-      user: {},
+      user: {}
       // activeTab: 'activity'
     }
   },
@@ -32,12 +37,13 @@ export default {
     ])
   },
   created() {
+    console.log(mapGetters)
     this.getUser()
   },
   methods: {
     getUser() {
       this.user = {
-        name: "yingxs",
+        name: 'wujiayao',
         role: this.roles.join(' | '),
         email: 'admin@test.com',
         avatar: this.avatar
