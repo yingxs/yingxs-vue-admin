@@ -6,6 +6,7 @@
 
     <el-form label-width="50px">
         <el-col :span="20" push="2">
+          <br />
           <el-form-item label="选择1" >
             <el-select  v-model="value" :size="'small'" placeholder="请选择">
               <el-option
@@ -27,7 +28,7 @@
             </el-select>
           </el-form-item>
           <div class="box-center process-circle-charts">
-            <el-progress type="circle" :percentage="10"  ></el-progress>
+            <el-progress type="circle" :percentage="10" width="185"  ></el-progress>
           </div>
         </el-col>
     </el-form>

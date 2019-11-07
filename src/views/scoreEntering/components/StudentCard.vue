@@ -43,11 +43,11 @@
 
       <el-col >
         <svg-icon icon-class="skill" />
-        <span>进度</span>
+        <span>进2度</span>
         <hr />
       </el-col>
 
-      <el-col :span="23" :push="1">
+      <el-col :span="23" :push="2"  >
          <el-badge :value="98.55" class="item">
            <el-button size="mini">评论</el-button>
          </el-badge>
@@ -79,8 +79,8 @@
          <el-badge :value="63.25" class="item" type="warning">
            <el-button size="mini">回复</el-button>
          </el-badge>
+         <br /><br /><br />
       </el-col>
-
     </el-card>
   </div>
 </template>
@@ -98,6 +98,9 @@ export default {
 
 </style>
 <style>
+  .foot_col {
+    padding-bottom: 20px;
+  }
   .item {
     margin-top: 10px;
     margin-right: 40px;

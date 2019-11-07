@@ -7,9 +7,13 @@
       <el-col :span="6" :xs="24">
         <select-and-process-card />
       </el-col>
-      <el-col :span="7" :xs="24">
-        <student-card :user="user" />
-      </el-col>
+     <el-col :span="7" :xs="24">
+       <student-card :user="user" />
+     </el-col>
+     <el-col :span="10" :xs="24">
+        <student-single-score-List  />
+     </el-col>
+
     </el-row>
   </div>
 </template>
@@ -19,10 +23,11 @@ import { mapGetters } from 'vuex'
 import UserCard from '../profile/components/UserCard'
 import StudentCard from './components/StudentCard'
 import SelectAndProcessCard from './components/SelectAndProcessCard'
+import StudentSingleScoreList from './components/StudentSingleScoreList'
 
 export default {
   name: 'Profile',
-  components: { UserCard, StudentCard,SelectAndProcessCard },
+  components: { UserCard, StudentCard,SelectAndProcessCard,StudentSingleScoreList },
   data() {
     return {
       user: {}
