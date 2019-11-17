@@ -5,45 +5,40 @@
     </div>
 
     <el-form label-width="50px">
-        <el-col :span="20" push="2">
+        <el-col :span="20" :push="2">
           <br />
-          <el-form-item label="选择1" >
-            <el-select  v-model="value" :size="'small'" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
+					
+          <el-form-item label="班级" >
+            <el-select  v-model="selectGrade" :size="'small'" placeholder="请选择">
+              <el-option v-for="item in gradeList" :key="item.cId" :label="item.cName" :value="item.cId"> </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="选择2" >
-            <el-select  v-model="value" :size="'small'" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
+					
+					
+          <el-form-item label="科目" >
+            <el-select  v-model="selectSocure" :size="'small'" placeholder="请选择">
+              <el-option v-for="item in socureList" :key="item.socureId" :label="item.socureName" :value="item.socureId"> </el-option>
             </el-select>
           </el-form-item>
+					
+					
           <div class="box-center process-circle-charts">
-            <el-progress type="circle" :percentage="10" width="185"  ></el-progress>
+            <el-progress type="circle" :percentage="processInfo.process" :width="185"  ></el-progress>
           </div>
         </el-col>
     </el-form>
 
-      <el-form label-width="60px"  inline="true">
+      <el-form label-width="60px"  :inline="true">
         <el-col  :span="24" >
           <div class="box-center process-info">
             <el-form-item label="已处理"  >
-              <el-tag :type="'success'"> 26  </el-tag>
+              <el-tag :type="'success'"> {{processInfo.finish}}  </el-tag>
             </el-form-item>
             <el-form-item label="待处理"  >
-              <el-tag :type="'info'"> 20  </el-tag>
+              <el-tag :type="'info'">  {{processInfo.awaitDispose}}  </el-tag>
             </el-form-item>
             <el-form-item label="异常">
-              <el-tag :type="'warning'"> 0  </el-tag>
+              <el-tag :type="'warning'">  {{processInfo.exception}} </el-tag>
             </el-form-item>
           </div>
         </el-col>
@@ -54,29 +49,88 @@
 </template>
 
 <script>
+	import request from '@/utils/request'
+	import { MessageBox, Message } from 'element-ui'
+	
   export default {
     name: 'SelectAndProcessCard',
     data() {
           return {
-            options: [{
-              value: '选项1',
-              label: '黄金糕'
-            }, {
-              value: '选项2',
-              label: '双皮奶'
-            }, {
-              value: '选项3',
-              label: '蚵仔煎'
-            }, {
-              value: '选项4',
-              label: '龙须面'
-            }, {
-              value: '选项5',
-              label: '北京烤鸭'
-            }],
-            value: ''
+						gradeList:[],
+						selectGrade:'',
+						socureList:[],
+						selectSocure:'',
+						processInfo:{
+							process:0,
+							finish:0,
+							awaitDispose:0,
+							exception:0,
+						}
           }
-        }
+        },
+				created(){
+					
+					request({
+					  url: '/grade/list',
+					  method: 'get'
+					}).then(response => {
+						this.gradeList = response.data
+					}).catch(error => {
+						Message({
+						  message: '班级列表加载失败：'+error || 'Error',
+						  type: 'error',
+						  duration: 5 * 1000
+						})
+					})
+					
+					request({
+					  url: '/socure/list',
+					  method: 'get'
+					}).then(response => {
+						this.socureList = response.data
+					}).catch(error => {
+						Message({
+						  message: '课程列表加载失败：'+error || 'Error',
+						  type: 'error',
+						  duration: 5 * 1000
+						})
+					})
+					
+					
+				},
+				watch:{
+					selectGrade:function(val) {
+							 if (this.selectGrade != '' && this.selectSocure != '' ) {
+								 this.getGradeProcess({gradeId:this.selectGrade,socureId:this.selectSocure});
+								 // 发射事件
+								 this.$emit('gradeAndSocureSelected',this.selectGrade,this.selectSocure);
+							 }
+					},
+					selectSocure : function (val) {
+							 if (this.selectGrade != '' && this.selectSocure != '' ) {
+									this.getGradeProcess({gradeId:this.selectGrade,socureId:this.selectSocure});
+									// 发射事件
+									this.$emit('gradeAndSocureSelected',this.selectGrade,this.selectSocure);
+							 }
+					}
+				},
+		methods:{
+				getGradeProcess(query){
+					request({
+					  url: '/score/process',
+					  method: 'get',
+						params:query
+					}).then(response => {
+						this.processInfo = response
+					}).catch(error => {
+						Message({
+						  message: '录入进度加载失败：'+error || 'Error',
+						  type: 'error',
+						  duration: 5 * 1000
+						})
+					})
+				}
+		}
   }
 </script>
 

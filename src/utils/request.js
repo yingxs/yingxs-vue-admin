@@ -5,7 +5,10 @@ import { getToken } from '@/utils/auth'
 
 // 创建一个axios实例
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+	// baseURL: "/dev-api",  
+  // baseURL: "http://localhost/api",  
+  baseURL: "http://md.yingxs.com:8888",  
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
@@ -43,8 +46,12 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
+		
+		console.log(response);
+		
     const res = response.data
 
+		return res
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 20000) {
       Message({
@@ -72,13 +79,22 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+		
+    console.log('err:' , error) // for debug
+    console.log('err:' + error) // for debug
+    console.log('error.message:' , error.message) // for debug
+    console.log('error.data:' , error.data) // for debug
+    console.log('error.status:' , error.status) // for debug
+    console.log('error.response:' , error.response) // for debug
+		
     Message({
-      message: error.message,
+      message: error.response.data.message,
       type: 'error',
       duration: 5 * 1000
     })
-    return Promise.reject(error)
+		
+		
+    return Promise.reject(error.response.data);
   }
 )
 

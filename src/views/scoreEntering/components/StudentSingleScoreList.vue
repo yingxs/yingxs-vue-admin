@@ -1,12 +1,19 @@
 <template>
   <el-card :body-style="'padding:0'">
     <div slot="header" class="clearfix">
-      <span>成绩排名</span>
+			<el-col :span="4">
+				<span>成绩排名</span>
+			</el-col>
+      <el-col :span="8" :push="15">
+				<el-switch  active-text="同分同位"   active-color="#13ce66" inactive-color="#a0a0a0" > 
+				</el-switch>
+			</el-col>
     </div>
-    <el-table :data="tableData" height="500"  border style="width: 100%; border: none;">
+    <el-table    height="500"  border style="width: 100%; border: none;">
       <el-table-column prop="rank" label="名次" width="50">  </el-table-column>
-      <el-table-column prop="name" label="姓名" width="120">  </el-table-column>
-      <el-table-column  prop="currScore"  label="本科成绩" width="100"> </el-table-column>
+      <el-table-column prop="sName" label="姓名" width="120">  </el-table-column>
+      <el-table-column  prop="scoScore"  label="本科成绩" width="100"> </el-table-column>
+			
 <!--
       <el-table-column prop="otherScore" label="其他成绩"  width="150">
          <student-score-process ></student-score-process>
@@ -42,72 +49,22 @@
 
     data() {
       return {
-        tableData: [{
-          rank:1,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        },
-        {
-          rank:2,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        },
-        {
-          rank:2,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        },{
-          rank:2,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        },{
-          rank:2,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        },{
-          rank:2,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        },{
-          rank:2,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        },{
-          rank:2,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        },{
-          rank:2,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        },{
-          rank:2,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        },{
-          rank:2,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        },{
-          rank:2,
-          name: '王小虎',
-          currScore: '26.35',
-          otherScore: '65',
-        }
-        ]
+				
       }
-    }
+    },
+		methods: {
+			switchChange(value){
+				 this.$emit('switchChange',value)
+			}
+		},
+		props: {
+			plistLoading: {
+				type: Boolean
+			},
+			ptableData: {
+				type:Array
+			}
+		}  
   }
 </script>
 <style>

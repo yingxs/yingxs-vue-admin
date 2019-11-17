@@ -1,17 +1,14 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-     <!-- <el-col :span="6" :xs="24">
-        <user-card :user="user" />
-      </el-col> -->
       <el-col :span="6" :xs="24">
-        <select-and-process-card />
+        <select-and-process-card  @gradeAndSocureSelected="gradeAndSocureSelected" />
       </el-col>
      <el-col :span="7" :xs="24">
-       <student-card :user="user" />
+       <student-card :pgrade-id="gradeId"  :psocure-id="socureId"  />
      </el-col>
      <el-col :span="10" :xs="24">
-        <student-single-score-List  />
+        <student-single-score-List  @switchChange="switchChange"  :plistLoading="listLoading"  :ptableData="tableData"    />
      </el-col>
 
     </el-row>
@@ -26,38 +23,47 @@ import SelectAndProcessCard from './components/SelectAndProcessCard'
 import StudentSingleScoreList from './components/StudentSingleScoreList'
 
 export default {
-  name: 'Profile',
+  name: 'ScoreEntering',
   components: { UserCard, StudentCard,SelectAndProcessCard,StudentSingleScoreList },
   data() {
     return {
-      user: {}
-      // activeTab: 'activity'
-    }
+			gradeId: 0,
+			socureId: 0,
+			listLoading:false,
+			equalScoreRankEqueal:'0',
+			tableData:[]
+		}
   },
-  computed: {
-    ...mapGetters([
-      'name',
-      'avatar',
-      'roles'
-    ])
-  },
-  created() {
-    console.log(mapGetters)
-    this.getUser()
-  },
-  methods: {
-    getUser() {
-      this.user = {
-        name: 'wujiayao',
-        role: this.roles.join(' | '),
-        email: 'admin@test.com',
-        avatar: this.avatar
-      }
-    }
-  }
+	methods: {
+		gradeAndSocureSelected(gradeId,socureId){
+			 this.gradeId = gradeId
+			 this.socureId = socureId
+			 
+			 console.log("gradeAndSocureSelected")
+			 
+			 request({
+			   url: '/score/list',
+			   method: 'get',
+			 	params: {
+			 		gradeId:gradeId,
+			 		sourceId:gradeId,
+			 		equalScoreRankEqueal:this.equalScoreRankEqueal
+			 	}
+			 }).then(response => {
+			 	this.tableData = response.data
+			 }).catch(error => {
+			 	Message({
+			 	  message: '班级单科排名查询失败：'+error.message || 'Error',
+			 	  type: 'error',
+			 	  duration: 5 * 1000
+			 	})
+			 })
+		},
+		switchChange(value){
+			this.equalScoreRankEqueal = value;
+		}
+	}
 }
-
 </script>
-Expected indentation of 0 spaces but found 2
 <style>
 </style>

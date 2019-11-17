@@ -2,20 +2,19 @@
   <div class="studentCard" >
     <el-card class="box-card" body-style="padding:20px;">
       <div slot="header" class="clearfix">
-        <span>信息查询3</span>
+        <span>学生信息</span>
       </div>
-
       <el-col>
         <div class="box-center">
-          <pan-thumb :image="'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'" :height="'100px'" :width="'100px'"  >
+          <pan-thumb :image="baseInfo.s_head_image" :height="'100px'" :width="'100px'"  >
             <div>
              来了<span><br>老弟</span>
             </div>
           </pan-thumb>
         </div>
         <div class="box-center">
-          <h6>刘畅</h6>
-          <h6>三年级二班</h6>
+          <h6> {{baseInfo.s_name}} </h6>
+          <h6> {{baseInfo.c_name}} </h6>
         </div>
       </el-col>
 
@@ -26,32 +25,62 @@
       </el-col>
 
       <el-col :span="20" :push="2">
-        <el-form label-width="40px">
-          <el-form-item label="编号">
-            <el-input />
-          </el-form-item>
-          <el-form-item label="条件">
+        <el-form :model="numberAndScoreForm"  label-width="50px" ref="numberQueryForm" >
+					<div ref="number">
+						<el-form-item 
+							label="学号" 
+							prop="number"
+							:rules="[
+								{ required: true ,message: '学号不能为空' } 
+							]"
+						>
+							<el-col  :span="18">
+								<el-input   @keyup.enter.native="getStudentInfo"  v-model="numberAndScoreForm.number"  />
+							</el-col>
+							<el-col :span="3" :push="1"  >
+								<el-button @click="getStudentInfo" :loading="loading" type="primary">查询</el-button>
+							</el-col>
+						</el-form-item>
+					</div>
+				</el-form>
+				
+				<el-form  :model="numberAndScoreForm"  label-width="50px"  ref="scoreCommitForm"  >
+          <el-form-item 
+					 label="分数" 
+					 prop="score"
+					 :rules="[
+						{ required: true ,message: '分数不能为空' },
+						{ type: 'number' ,message: '分数不规范' }
+					 ]"
+					 >
             <el-col :span="10">
-              <el-input />
+              <el-input  @keyup.enter.native="commitScore"   ref="inputScore"  v-model.number="numberAndScoreForm.score" />
             </el-col>
-            <el-col :span="6" :push="3">
-              <el-button type="primary">查询</el-button>
+            <el-col :span="14" :push="2"  >
+              <el-button @click="commitScore" type="primary">录入</el-button>
+              <el-button type="primary">清空</el-button>
             </el-col>
           </el-form-item>
-        </el-form>
+				</el-form>
+					
+					
+        
       </el-col>
 
       <el-col >
         <svg-icon icon-class="skill" />
-        <span>进2度</span>
+        <span>成绩</span>
         <hr />
       </el-col>
 
       <el-col :span="23" :push="2"  >
-         <el-badge :value="98.55" class="item">
-           <el-button size="mini">评论</el-button>
+				
+         <el-badge    v-for="item in socureList"   :value="item.score" class="item"> 
+						<el-button size="mini">{{item.socureName  }}</el-button>
          </el-badge>
-
+				 
+				 
+<!-- 
          <el-badge :value="78.56" class="item">
            <el-button size="mini">回复</el-button>
          </el-badge>
@@ -79,6 +108,8 @@
          <el-badge :value="63.25" class="item" type="warning">
            <el-button size="mini">回复</el-button>
          </el-badge>
+				 -->
+				 
          <br /><br /><br />
       </el-col>
     </el-card>
@@ -87,10 +118,133 @@
 
 <script>
 import PanThumb from '@/components/PanThumb'
-
+import request from '@/utils/request'
+import { MessageBox, Message } from 'element-ui'
+	
+	
 export default {
   name: 'StudentCard',
-  components: { PanThumb }
+  components: { PanThumb },
+	data(){
+		return {
+			numberAndScoreForm: {
+				number:null ,
+				score: null
+			},
+			socureList:[
+				{score: "0.00", socureName: "语文", socureId: 1},
+				{score: "0.00", socureName: "数学", socureId: 1},
+				{score: "0.00", socureName: "英语", socureId: 1},
+				{score: "0.00", socureName: "历史", socureId: 1},
+				{score: "0.00", socureName: "政治", socureId: 1},
+				{score: "0.00", socureName: "物理", socureId: 1},
+				{score: "0.00", socureName: "化学", socureId: 1},
+				{score: "0.00", socureName: "地理", socureId: 1}
+				],
+			baseInfo:{
+				s_name:'姓名',
+				c_name:'所属班级',
+				s_head_image: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
+			},
+			loading:false
+		}
+	},
+	// props:[ 'pgradeId', 'psocureId' ],
+	props: {
+		pgradeId: {
+			type: Number
+		},
+		psocureId: {
+			type:Number
+		}
+	},
+	created() { },
+	methods:{
+		// 根据学号获得学生信息
+		getStudentInfo(){
+			this.$refs['numberQueryForm'].validate((valid) => {
+				if (!valid) {
+					return false;
+				} else {
+					if (this.loading) {
+						return ;
+					}
+					
+					this.loading = true;
+					request({
+					  url: '/student/'+this.numberAndScoreForm.number,
+					  method: 'get'
+					}).then(response => {
+						this.loading = false;
+						this.baseInfo = response.data.baseInfo
+						this.socureList = response.data.scoreInfo
+						
+						this.$refs.inputScore.focus()
+						
+					}).catch(error => {
+						this.loading = false
+						this.clearStudentInfo()
+						Message({
+						  message: '学生信息查询失败：'+error.message || 'Error',
+						  type: 'error',
+						  duration: 5 * 1000
+						})
+					})
+					
+				}
+			});
+			console.log("根据学号获取学生信息");
+		},
+		// 清空学生信息
+		clearStudentInfo(){
+			this.baseInfo = {
+				s_name:'姓名',
+				s_id:0,
+				c_name:'所属班级',
+				s_head_image: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
+			}
+			this.socureList = [
+				{score: "0.00", socureName: "语文", socureId: 1},
+				{score: "0.00", socureName: "数学", socureId: 1},
+				{score: "0.00", socureName: "英语", socureId: 1},
+				{score: "0.00", socureName: "历史", socureId: 1},
+				{score: "0.00", socureName: "政治", socureId: 1},
+				{score: "0.00", socureName: "物理", socureId: 1},
+				{score: "0.00", socureName: "化学", socureId: 1},
+				{score: "0.00", socureName: "地理", socureId: 1}
+				];
+		},
+		// 录入成绩
+		commitScore(){
+			
+			this.$refs['scoreCommitForm'].validate((valid) => {
+				if (!valid) {
+					return false;
+				} else {
+					if (this.pgradeId  && this.psocureId) {
+						
+						
+						
+						
+						
+						 
+					} else {
+						Message({
+						  message: '请先选择班级和科目' || 'Error',
+						  type: 'error',
+						  duration: 5 * 1000
+						})
+					}
+				}
+			});
+			
+		}
+		
+		
+		
+		
+		
+	}
 }
 </script>
 
