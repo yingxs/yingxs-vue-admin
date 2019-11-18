@@ -5,10 +5,10 @@ import { getToken } from '@/utils/auth'
 
 // 创建一个axios实例
 const service = axios.create({
-  // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
 	// baseURL: "/dev-api",  
-  // baseURL: "http://localhost/api",  
-  baseURL: "http://md.yingxs.com:8888",  
+  // baseURL: "http://localhost:7070",  
+  // baseURL: "http://md.yingxs.com:8888",  
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
@@ -47,7 +47,7 @@ service.interceptors.response.use(
    */
   response => {
 		
-		console.log(response);
+		// console.log(response);
 		
     const res = response.data
 

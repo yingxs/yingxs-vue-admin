@@ -33,7 +33,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="300px" label="Title">
+      <el-table-column min-width="300px" label="标题">
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <el-input v-model="row.title" class="edit-input" size="small" />
@@ -44,7 +44,7 @@
               type="warning"
               @click="cancelEdit(row)"
             >
-              cancel
+              取消
             </el-button>
           </template>
           <span v-else>{{ row.title }}</span>

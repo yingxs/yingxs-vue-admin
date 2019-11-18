@@ -59,15 +59,14 @@
 						gradeList:[],
 						selectGrade:'',
 						socureList:[],
-						selectSocure:'',
-						processInfo:{
-							process:0,
-							finish:0,
-							awaitDispose:0,
-							exception:0,
-						}
+						selectSocure:''
           }
         },
+				props:{
+					processInfo: {
+						type: Object
+					}
+				},
 				created(){
 					
 					request({
@@ -101,36 +100,17 @@
 				watch:{
 					selectGrade:function(val) {
 							 if (this.selectGrade != '' && this.selectSocure != '' ) {
-								 this.getGradeProcess({gradeId:this.selectGrade,socureId:this.selectSocure});
 								 // 发射事件
 								 this.$emit('gradeAndSocureSelected',this.selectGrade,this.selectSocure);
 							 }
 					},
 					selectSocure : function (val) {
 							 if (this.selectGrade != '' && this.selectSocure != '' ) {
-									this.getGradeProcess({gradeId:this.selectGrade,socureId:this.selectSocure});
 									// 发射事件
 									this.$emit('gradeAndSocureSelected',this.selectGrade,this.selectSocure);
 							 }
 					}
-				},
-		methods:{
-				getGradeProcess(query){
-					request({
-					  url: '/score/process',
-					  method: 'get',
-						params:query
-					}).then(response => {
-						this.processInfo = response
-					}).catch(error => {
-						Message({
-						  message: '录入进度加载失败：'+error || 'Error',
-						  type: 'error',
-						  duration: 5 * 1000
-						})
-					})
-				}
-		}
+				} 
   }
 </script>
 

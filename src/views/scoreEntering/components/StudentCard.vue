@@ -25,7 +25,7 @@
       </el-col>
 
       <el-col :span="20" :push="2">
-        <el-form :model="numberAndScoreForm"  label-width="50px" ref="numberQueryForm" >
+        <el-form @submit.native.prevent :model="numberAndScoreForm"  label-width="50px" ref="numberQueryForm" >
 					<div ref="number">
 						<el-form-item 
 							label="学号" 
@@ -35,16 +35,16 @@
 							]"
 						>
 							<el-col  :span="18">
-								<el-input   @keyup.enter.native="getStudentInfo"  v-model="numberAndScoreForm.number"  />
+								<el-input   ref="inputNumber"   @keyup.enter.native.prevent="getStudentInfo"  v-model="numberAndScoreForm.number"  />
 							</el-col>
 							<el-col :span="3" :push="1"  >
-								<el-button @click="getStudentInfo" :loading="loading" type="primary">查询</el-button>
+								<el-button @click="getStudentInfo" :loading="queryLoading" type="primary">查询</el-button>
 							</el-col>
 						</el-form-item>
 					</div>
 				</el-form>
 				
-				<el-form  :model="numberAndScoreForm"  label-width="50px"  ref="scoreCommitForm"  >
+				<el-form  @submit.native.prevent  :model="numberAndScoreForm"  label-width="50px"  ref="scoreCommitForm"  >
           <el-form-item 
 					 label="分数" 
 					 prop="score"
@@ -57,8 +57,8 @@
               <el-input  @keyup.enter.native="commitScore"   ref="inputScore"  v-model.number="numberAndScoreForm.score" />
             </el-col>
             <el-col :span="14" :push="2"  >
-              <el-button @click="commitScore" type="primary">录入</el-button>
-              <el-button type="primary">清空</el-button>
+              <el-button @click="commitScore" type="primary" :loading="commitLoading"  >录入</el-button>
+              <el-button @click="resetAllForm" type="primary">清空</el-button>
             </el-col>
           </el-form-item>
 				</el-form>
@@ -143,10 +143,12 @@ export default {
 				],
 			baseInfo:{
 				s_name:'姓名',
+				s_id: 0,
 				c_name:'所属班级',
 				s_head_image: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
 			},
-			loading:false
+			queryLoading:false,
+			commitLoading:false
 		}
 	},
 	// props:[ 'pgradeId', 'psocureId' ],
@@ -162,28 +164,33 @@ export default {
 	methods:{
 		// 根据学号获得学生信息
 		getStudentInfo(){
+			
+			
+			
 			this.$refs['numberQueryForm'].validate((valid) => {
 				if (!valid) {
 					return false;
 				} else {
-					if (this.loading) {
+					if (this.queryLoading) {
 						return ;
 					}
 					
-					this.loading = true;
+					this.queryLoading = true;
 					request({
 					  url: '/student/'+this.numberAndScoreForm.number,
 					  method: 'get'
 					}).then(response => {
-						this.loading = false;
+						this.queryLoading = false;
 						this.baseInfo = response.data.baseInfo
 						this.socureList = response.data.scoreInfo
-						
+						// 清空分数框
+						this.resetScoreForm()
+						// 分数框获得的焦点
 						this.$refs.inputScore.focus()
-						
 					}).catch(error => {
-						this.loading = false
+						this.queryLoading = false
 						this.clearStudentInfo()
+						this.resetScoreForm()
 						Message({
 						  message: '学生信息查询失败：'+error.message || 'Error',
 						  type: 'error',
@@ -199,7 +206,7 @@ export default {
 		clearStudentInfo(){
 			this.baseInfo = {
 				s_name:'姓名',
-				s_id:0,
+				s_id: 0,
 				c_name:'所属班级',
 				s_head_image: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
 			}
@@ -211,8 +218,7 @@ export default {
 				{score: "0.00", socureName: "政治", socureId: 1},
 				{score: "0.00", socureName: "物理", socureId: 1},
 				{score: "0.00", socureName: "化学", socureId: 1},
-				{score: "0.00", socureName: "地理", socureId: 1}
-				];
+				{score: "0.00", socureName: "地理", socureId: 1} ];
 		},
 		// 录入成绩
 		commitScore(){
@@ -222,6 +228,56 @@ export default {
 					return false;
 				} else {
 					if (this.pgradeId  && this.psocureId) {
+						
+						if (this.baseInfo.s_id == 0) {
+							Message({
+							  message: '请先查询出学生信息' || 'Error',
+							  type: 'error',
+							  duration: 3 * 1000
+							})
+						}
+
+						if (this.commitLoading) {
+							return ;
+						}
+						this.commitLoading = true;
+						request({
+						  url: '/score',
+						  method: 'post',
+							data:{
+								scoGradeId:this.pgradeId,
+								scoSocureId:this.psocureId,
+								scoStudentId:this.baseInfo.s_id,
+								scoScore:this.numberAndScoreForm.score
+							}
+						}).then(response => {
+							this.commitLoading = false;
+							
+							// 成功通知弹框
+							this.$notify({
+								title: 'ok',
+								message: response.message,
+								type: 'success'
+							});
+							
+							// 发送成功事件
+							this.$emit("commitScoreSuccess");
+							//  重置表单
+							this.$refs.inputScore.blur()
+							this.resetAllForm();
+							// 学号文本框获得焦点
+							this.$refs.inputNumber.focus()
+							// 清空学生信息
+							this.clearStudentInfo();
+						}).catch(error => {
+							this.commitLoading = false;
+							Message({
+							  message: response.message || 'Error',
+							  type: 'error',
+							  duration: 5 * 1000
+							})
+						})
+						
 						
 						
 						
@@ -238,8 +294,19 @@ export default {
 				}
 			});
 			
+		},
+		// 重置分数表单
+		resetScoreForm() {
+			this.$refs['scoreCommitForm'].resetFields();
+		},
+		// 重置学号表单
+		resetNumberForm() {
+			this.$refs['numberQueryForm'].resetFields();
+		},
+		resetAllForm(){
+			this.resetScoreForm();
+			this.resetNumberForm();
 		}
-		
 		
 		
 		

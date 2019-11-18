@@ -4,12 +4,18 @@
 			<el-col :span="4">
 				<span>成绩排名</span>
 			</el-col>
-      <el-col :span="8" :push="15">
-				<el-switch  active-text="同分同位"   active-color="#13ce66" inactive-color="#a0a0a0" > 
+      <el-col :span="4" :push="15">
+				<el-switch  active-text="同分同位"  
+					@change="switchChange"
+					v-model="equalScoreRankEqueal" 
+					active-value="1"  
+					inactive-value="0" 
+					active-color="#13ce66" 
+					inactive-color="#a0a0a0" > 
 				</el-switch>
 			</el-col>
     </div>
-    <el-table    height="500"  border style="width: 100%; border: none;">
+    <el-table   :data="ptableData" v-loading="plistLoading" height="500"  border style="width: 100%; border: none;">
       <el-table-column prop="rank" label="名次" width="50">  </el-table-column>
       <el-table-column prop="sName" label="姓名" width="120">  </el-table-column>
       <el-table-column  prop="scoScore"  label="本科成绩" width="100"> </el-table-column>
@@ -49,7 +55,7 @@
 
     data() {
       return {
-				
+				equalScoreRankEqueal:'1'
       }
     },
 		methods: {
