@@ -8,7 +8,7 @@
        <student-card :pgrade-id="gradeId"  :psocure-id="socureId" @commitScoreSuccess="commitScoreSuccess"  />
      </el-col>
      <el-col :span="10" :xs="24">
-        <student-single-score-List  @switchChange="switchChange"  :plistLoading="listLoading"  :ptableData="tableData"    />
+        <student-single-score-List @loadingList="loadingList" @unLoadingList="unLoadingList"   @switchChange="switchChange" @updateList="updateList"  :plistLoading="listLoading"  :ptableData="tableData"    />
      </el-col>
 
     </el-row>
@@ -42,12 +42,17 @@ export default {
 		}
   },
 	methods: {
+		// 班级和科目被选中
 		gradeAndSocureSelected(gradeId,socureId){
 			 this.gradeId = gradeId
 			 this.socureId = socureId
-			 this.getGradeProcess({gradeId:this.gradeId,socureId:this.socureId});
 			 this.commitScoreSuccess()
 		},
+		// 修改或删除之后刷新列表
+		updateList(){
+			this.commitScoreSuccess()
+		},
+		// 成绩提交成功
 		commitScoreSuccess(){
 			this.listLoading = true
 			request({
@@ -74,6 +79,7 @@ export default {
 				})
 			});
 		},
+		// 获得进度
 		getGradeProcess(query){
 			request({
 			  url: '/score/process',
@@ -89,6 +95,15 @@ export default {
 				})
 			})
 		},
+		// 打开列表加载遮罩
+		loadingList(){
+			this.listLoading = true
+		},
+		// 关闭列表加载遮罩
+		unLoadingList(){
+			this.listLoading = false
+		},
+		// 同分同位开关更改
 		switchChange(value){
 			this.equalScoreRankEqueal = value
 			this.commitScoreSuccess()

@@ -223,6 +223,13 @@ export default {
 		// 录入成绩
 		commitScore(){
 			
+			if (this.numberAndScoreForm.number == this.numberAndScoreForm.score) {
+				this.resetScoreForm();
+				// 分数框获得的焦点
+				this.$refs.inputScore.focus()
+				return ;
+			}
+			
 			this.$refs['scoreCommitForm'].validate((valid) => {
 				if (!valid) {
 					return false;
@@ -240,6 +247,7 @@ export default {
 						if (this.commitLoading) {
 							return ;
 						}
+						
 						this.commitLoading = true;
 						request({
 						  url: '/score',
@@ -306,6 +314,7 @@ export default {
 		resetAllForm(){
 			this.resetScoreForm();
 			this.resetNumberForm();
+			this.clearStudentInfo();
 		}
 		
 		
