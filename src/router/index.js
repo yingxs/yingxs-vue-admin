@@ -31,6 +31,18 @@ import nestedRouter from './modules/nested'
     breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
     activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
   }
+	
+	正常:
+	 master: Master has sent all binlog to slave; waiting for binlog to be updated
+	 
+	 slave:
+					Waiting for master to send event
+					Slave has read all relay log; waiting for the slave I/O thread to update it
+	
+	
+	
+	
+	
  */
 
 /**
@@ -115,7 +127,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/guide/index'),
         name: 'Guide',
-        meta: { title: '指南', icon: 'guide', noCache: true }
+        meta: { title: '指南', icon: 'guide', noCache: false }
       }
     ]
   },
@@ -204,7 +216,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/scoreEntering/index'),
         name: 'ScoreEntering',
-        meta: { title: '成绩录入', icon: 'form', noCache: true }
+        meta: { title: '成绩录入', icon: 'form', noCache: false,keepAlive:true }
       }
     ]
   },
@@ -216,7 +228,7 @@ export const asyncRoutes = [
 	      path: 'index',
 	      component: () => import('@/views/TotalScoreList/index'),
 	      name: 'TotalScoreList',
-	      meta: { title: '总成绩管理', icon: 'nested', noCache: true }
+	      meta: { title: '总成绩管理', icon: 'nested', noCache: false, }
 	    }
 	  ]
 	},

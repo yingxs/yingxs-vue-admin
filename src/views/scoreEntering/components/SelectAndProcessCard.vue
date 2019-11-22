@@ -9,14 +9,14 @@
           <br />
 					
           <el-form-item label="班级" >
-            <el-select  v-model="selectGrade" :size="'small'" placeholder="请选择">
+            <el-select clearable  filterable   v-model="selectGrade" :size="'small'" placeholder="请选择">
               <el-option v-for="item in gradeList" :key="item.cId" :label="item.cName" :value="item.cId"> </el-option>
             </el-select>
           </el-form-item>
 					
 					
           <el-form-item label="科目" >
-            <el-select  v-model="selectSocure" :size="'small'" placeholder="请选择">
+            <el-select clearable  filterable   v-model="selectSocure" :size="'small'" placeholder="请选择">
               <el-option v-for="item in socureList" :key="item.socureId" :label="item.socureName" :value="item.socureId"> </el-option>
             </el-select>
           </el-form-item>
